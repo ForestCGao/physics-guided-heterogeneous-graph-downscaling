@@ -1,0 +1,89 @@
+# Final paper model; historical ablation settings are excluded.
+data:
+  root: /path/to/your/data
+  train_split: train
+  val_split: val
+  test_split: test
+  radar: radar.npy
+  conditions: conditions.npy
+  graphs: graphs
+  segment_len: 8
+
+model:
+  in_dim: 5
+  hidden_dim: 192
+  num_A_side: 32
+  n_heads: 2
+  n_layers: 3
+  dropout: 0.0
+  solver: euler
+  residual_alpha_init: 0.1
+
+# Values from the executable graph-construction block in the source.
+graph:
+  grid_size: 32
+  core_threshold: 0.286
+  expand_threshold: 0.143
+  min_area: 2
+  min_core_area: 1
+  k_min: 4
+  k_max: 12
+  bb_near_px: 8
+  bb_wind_px: 10
+  bb_wind_speed_thr: 0.05
+  bb_cos_thr: 0.4
+  bb_dbz_diff_near: 0.20
+  bb_dbz_diff_wind: 0.25
+
+training:
+  batch_size: 1  # One temporal graph segment per loader batch.
+  lr: 0.0001
+  adam:
+    betas: [0.9, 0.999]
+    eps: 0.00000001
+    weight_decay: 0.0
+    amsgrad: false
+  epochs: 100
+  num_workers: 1
+  grad_accum_steps: 8  # Effective batch 8 for full single-process accumulation windows.
+  grad_clip: 1.0
+  eval_interval: 1
+  early_stop_patience: 10
+  early_stop_min_delta: 0.0
+  seed: 42
+  mixed_precision: 'no'
+
+# All three terms are always evaluated by CompositeRadarLoss.
+loss:
+  weighted_l1_weight: 1.0
+  physics_weight: 0.05
+  rain_mask_weight: 0.2
+  tiered:
+    thresholds: [-0.4286, -0.1429, 0.1429, 0.4286, 0.7143]
+    weights: [1.5, 2.5, 4.0, 6.0, 8.0]
+    base_weight: 1.0
+  physics:
+    u_channel_idx: 1
+    v_channel_idx: 2
+    wind_scale: 0.1
+    dt: 1.0
+    dx: 1.0
+    dy: 1.0
+  mask:
+    thresholds: [-0.4286, -0.1429, 0.1429, 0.4286, 0.7143]
+    temperature: 0.05
+    threshold_weights: [1.0, 1.2, 1.5, 2.0, 2.5]
+
+evaluation:
+  thresholds: [0.143, 0.286, 0.429]
+  data_range: 2.0
+  device: cuda
+  # Existing project PSNR: per-sample mean of -10*log10(MSE/4 + epsilon).
+  psnr_epsilon: 0.0000000001
+  # Bootstrap source is the existing 8-frame analysis, not the validation entry point.
+  bootstrap_samples: 1000
+  bootstrap_seed: 42
+  bootstrap_percentiles: [2.5, 97.5]
+
+output:
+  checkpoint_dir: ./checkpoints
