@@ -1,4 +1,4 @@
-# Final paper model; historical ablation settings are excluded.
+# Default configuration for the HGT-ODE downscaling model.
 data:
   root: /path/to/your/data
   train_split: train
@@ -19,7 +19,7 @@ model:
   solver: euler
   residual_alpha_init: 0.1
 
-# Values from the executable graph-construction block in the source.
+# Parameters for heterogeneous graph construction.
 graph:
   grid_size: 32
   core_threshold: 0.286
@@ -80,7 +80,7 @@ evaluation:
   device: cuda
   # Existing project PSNR: per-sample mean of -10*log10(MSE/4 + epsilon).
   psnr_epsilon: 0.0000000001
-  # Bootstrap source is the existing 8-frame analysis, not the validation entry point.
+  # Segment-level bootstrap confidence intervals for CSI.
   bootstrap_samples: 1000
   bootstrap_seed: 42
   bootstrap_percentiles: [2.5, 97.5]
