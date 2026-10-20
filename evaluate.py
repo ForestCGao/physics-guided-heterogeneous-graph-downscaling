@@ -81,7 +81,6 @@ class MetricAccumulator:
         self.squared_error += (diff ** 2).sum().item()
         self.num_pixels += diff.numel()
         self.num_samples += 1
-        # Same normalized-range formula as the project's existing PSNR evaluator.
         mse = ((target * 0.5 - pred * 0.5) ** 2).mean()
         self.psnr_sum += (-10.0 * torch.log10(mse + self.settings['psnr_epsilon'])).item()
         p, y = pred.numpy(), target.numpy()
