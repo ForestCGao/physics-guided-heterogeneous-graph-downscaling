@@ -128,7 +128,6 @@ def main():
     checkpoint_dir = Path(config['output']['checkpoint_dir'])
     if accelerator.is_main_process:
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
-    # As in the source, the patience counter starts at zero on resume.
     bad_count = 0
     thresholds = config['evaluation']['thresholds']
     for epoch in range(start_epoch, settings['epochs'] + 1):
