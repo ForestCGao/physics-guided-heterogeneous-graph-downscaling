@@ -13,11 +13,6 @@ Geometric implementation of *Heterogeneous Graph Transformer* (WWW 2020).
   removing unused graph-convolution/model alternatives and updating imports.
   These components are not claimed as original work of this release.
 
-The local source did not include a license header, upstream README or usable
-Git history. Provenance was established by comparing its classes and operations
-with the upstream source. The original upstream revision is unknown. The license
-was checked at https://github.com/acbull/pyHGT/blob/master/LICENSE.
-
 The upstream license is reproduced below. It applies to the upstream-derived
 code independently of the license for this release's original contributions.
 
